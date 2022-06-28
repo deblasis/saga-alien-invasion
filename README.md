@@ -16,6 +16,7 @@
 - [ ] Documentation
 - [ ] UX
 - [ ] Bonus: alien names randomizer
+- [ ] CI/CD and trunk based dev (I am working on this alone... probably overkill for now)
 
 ## Thinking 🤔
 - [ ] Consider using an EventBus
