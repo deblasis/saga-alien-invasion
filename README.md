@@ -5,7 +5,8 @@
 - [x] CLI
 - [x] File parser
 - [x] Map
-- [ ] Ensure repeteability even if we are dealing with "random" stuff
+- [ ] Ensure repeteability in tests even if we are dealing with "random" stuff
+- [ ] Ensure pseudo-randomness by seeding rand if not in tests
 - [ ] Alien spawner
 - [ ] Alien
   - [ ] Movement randomizer
