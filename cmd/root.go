@@ -71,7 +71,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		cmd.Println(app.Separator)
-		cmd.Printf("The 🌍 after %v day(s) of alien invasion:\n", world.CurrentDay)
+		cmd.Printf("The 🌍 after %v day(s) of alien invasion:\n", world.CurrentDay+1)
 		cmd.Println(app.Separator)
 		world.PrintMap(cmd.OutOrStdout())
 		cmd.Println(app.Separator)

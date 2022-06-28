@@ -50,6 +50,10 @@ func (w *World) Spin() error {
 	for day := 0; day < w.config.MaxTurns; day++ {
 		w.CurrentDay = day
 
+		if err := w.handleBattles(); err != nil {
+			return err
+		}
+
 		if len(w.Aliens) == 0 {
 			logg.Debug().Msg("All aliens are dead")
 			break
@@ -67,10 +71,7 @@ func (w *World) Spin() error {
 			break
 		}
 		//logg.Debug().Int("day", day).Msg("Executing day")
-		//assuming that a city is under siege and going to be destroyed within a day, so if we start with 2 aliens in a city it is marked as destroyed already, the logic can be changed by moving the handleBattles() below moveAliens()
-		if err := w.handleBattles(); err != nil {
-			return err
-		}
+
 		if err := w.moveAliens(); err != nil {
 			return err
 		}
