@@ -1,5 +1,6 @@
 package app
 
 type Map struct {
-	Cities map[string]*City
+	Cities          map[string]*City
+	sortedCityNames []string
 }

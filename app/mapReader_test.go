@@ -16,8 +16,13 @@ type lofiCity struct {
 
 func NewLofiCity(name string) *lofiCity {
 	return &lofiCity{
-		Name: name,
+		Name:       name,
+		Directions: make(map[Direction]string),
 	}
+}
+
+func (c lofiCity) String() string {
+	return fmt.Sprintf("{%v [N: %v E: %v S: %v W: %v]}", c.Name, c.Directions[NORTH], c.Directions[EAST], c.Directions[SOUTH], c.Directions[WEST])
 }
 
 func Test_mapReader_ParseMapFile(t *testing.T) {
