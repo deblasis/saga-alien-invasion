@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -33,11 +34,12 @@ func Test_mapReader_ParseMapFile(t *testing.T) {
 		reader io.Reader
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    map[string]lofiCity
-		wantErr bool
+		name        string
+		fields      fields
+		args        args
+		want        map[string]lofiCity
+		wantErr     bool
+		wantErrType *error
 	}{
 		{
 			name: "example map should be parsed correctly",
@@ -97,6 +99,152 @@ Bar south=Foo west=Bee`),
 			},
 			wantErr: false,
 		},
+		{
+			name: "map with cities on all directions should be parsed correctly",
+			fields: fields{
+				Cities: map[string]*City{},
+			},
+			args: args{
+				reader: strings.NewReader(`Foo north=Bar west=Baz south=Qu-ux east=FooBar`),
+			},
+			want: map[string]lofiCity{
+				"Foo": {
+					Name: "Foo",
+					Directions: map[Direction]string{
+						NORTH: "Bar",
+						EAST:  "FooBar",
+						SOUTH: "Qu-ux",
+						WEST:  "Baz",
+					},
+				},
+				"Bar": {
+					Name: "Bar",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "",
+						SOUTH: "Foo",
+						WEST:  "",
+					},
+				},
+				"Baz": {
+					Name: "Baz",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "Foo",
+						SOUTH: "",
+						WEST:  "",
+					},
+				},
+				"Qu-ux": {
+					Name: "Qu-ux",
+					Directions: map[Direction]string{
+						NORTH: "Foo",
+						EAST:  "",
+						SOUTH: "",
+						WEST:  "",
+					},
+				},
+				"FooBar": {
+					Name: "FooBar",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "",
+						SOUTH: "",
+						WEST:  "Foo",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "should not consider empty lines",
+			fields: fields{
+				Cities: map[string]*City{},
+			},
+			args: args{
+				reader: strings.NewReader(`Foo north=Bar west=Baz south=Qu-ux
+
+Bar south=Foo west=Bee
+
+
+
+
+
+`),
+			},
+			want: map[string]lofiCity{
+				"Foo": {
+					Name: "Foo",
+					Directions: map[Direction]string{
+						NORTH: "Bar",
+						EAST:  "",
+						SOUTH: "Qu-ux",
+						WEST:  "Baz",
+					},
+				},
+				"Bar": {
+					Name: "Bar",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "",
+						SOUTH: "Foo",
+						WEST:  "Bee",
+					},
+				},
+				"Baz": {
+					Name: "Baz",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "Foo",
+						SOUTH: "",
+						WEST:  "",
+					},
+				},
+				"Qu-ux": {
+					Name: "Qu-ux",
+					Directions: map[Direction]string{
+						NORTH: "Foo",
+						EAST:  "",
+						SOUTH: "",
+						WEST:  "",
+					},
+				},
+				"Bee": {
+					Name: "Bee",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "Bar",
+						SOUTH: "",
+						WEST:  "",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "should fail with ErrCityNameNotFound if malformed input (no city name)",
+			fields: fields{
+				Cities: map[string]*City{},
+			},
+			args: args{
+				reader: strings.NewReader(`north=Bar west=Baz south=Qu-ux`),
+			},
+			want:        map[string]lofiCity{},
+			wantErr:     true,
+			wantErrType: &ErrCityNameNotFound,
+		},
+		{
+			name: "should fail with ErrTooManyConnections if malformed input (too many connections for city)",
+			fields: fields{
+				Cities: map[string]*City{},
+			},
+			args: args{
+				reader: strings.NewReader(`Bar north=Bar west=Baz south=Qu-ux east=Foo east=FooBar`),
+			},
+			want:        map[string]lofiCity{},
+			wantErr:     true,
+			wantErrType: &ErrTooManyConnections,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -108,6 +256,15 @@ Bar south=Foo west=Bee`),
 				t.Errorf("mapreader.ParseMapFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
+			if tt.wantErrType != nil && !errors.Is(err, *tt.wantErrType) {
+				t.Errorf("mapreader.ParseMapFile() error = %v, wantErrType %v", err, *tt.wantErrType)
+			}
+
+			if tt.wantErr {
+				return
+			}
+
 			gotLofi := map2LofiMap(got)
 			if !(fmt.Sprintf("%v", gotLofi) == fmt.Sprintf("%v", tt.want)) {
 				t.Errorf("mapreader.ParseMapFile() = %v, want %v", gotLofi, tt.want)
