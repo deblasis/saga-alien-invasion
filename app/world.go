@@ -17,6 +17,7 @@ type World struct {
 func NewWorld(config *Config) *World {
 	return &World{
 		config: config,
+		Aliens: make(map[uuid.UUID]*Alien),
 	}
 }
 
@@ -26,7 +27,11 @@ func (w *World) Setup() error {
 		return err
 	}
 
-	//TODO: spawnAliens
+	err = w.spawnAliens()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -58,4 +63,11 @@ func (w *World) parseMapFile() error {
 	w.Map = m
 	logg.Debug().Msgf("Map %v", m)
 	return nil
+}
+
+func (w *World) spawnAliens() error {
+	logg := log.With().Str("component", "World.spawnAliens()").Int("aliensCount", w.config.AliensCount).Logger()
+	logg.Debug().Msg("executing")
+	as := NewAlienSpawner(w.config.AliensCount, w)
+	return as.Spawn()
 }

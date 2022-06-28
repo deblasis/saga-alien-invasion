@@ -2,6 +2,7 @@ package app
 
 import (
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -15,6 +16,8 @@ type Rand interface {
 	Intn(n int) int
 }
 
+var Random = NewRealRandomizer()
+
 type RealRandomizer struct{}
 
 func NewRealRandomizer() Rand {
@@ -24,4 +27,44 @@ func NewRealRandomizer() Rand {
 // Intn simply wraps the real implementation
 func (*RealRandomizer) Intn(n int) int {
 	return rand.Intn(n)
+}
+
+// FakeRandomizer holds a sequence of numbers that's initialized every time we call Intn, the argument is used as key to keep track of the current value in the sequence and so subsequent calls should provide different but predictable values
+// it's a naive implementation because it returns sequential numbers. Perhaps I should consider implementing some sort of in-memory event bus so that I would test event sequences f(events) => state
+// instead of trying to recreate these events from the inputs... which are random... I'll look into it
+type FakeRandomizer struct {
+	sync.RWMutex
+	seq  map[int][]int
+	cont map[int]int
+}
+
+func NewFakeRandomizer() Rand {
+	return &FakeRandomizer{
+		RWMutex: sync.RWMutex{},
+		seq:     map[int][]int{},
+		cont:    map[int]int{},
+	}
+}
+
+func (f *FakeRandomizer) Intn(n int) int {
+
+	f.Lock()
+	defer f.Unlock()
+
+	if f.seq[n] == nil {
+		f.seq[n] = make([]int, 0)
+	}
+
+	if len(f.seq[n]) == 0 {
+		for i := 0; i < n; i++ {
+			f.seq[n] = append(f.seq[n], i)
+		}
+	}
+
+	if f.cont[n]+1 >= len(f.seq[n])-1 {
+		f.cont[n] = -1
+	}
+	f.cont[n]++
+
+	return f.seq[n][f.cont[n]]
 }
