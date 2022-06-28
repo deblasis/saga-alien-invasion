@@ -65,7 +65,7 @@ func (mr *mapReader) parseCity(line string) error {
 	if len(cityMatch) == 0 || len(cityMatch[0]) < 2 || cityMatch[0][1] == "" {
 		return fmt.Errorf("error processing line %v - %w", line, ErrCityNameNotFound)
 	}
-	// I am assuming that cities without connections are sllowed
+	// I am assuming that cities without connections are allowed
 	// if len(connectionMatches) == 0 {
 	// 	return ErrConnectionsNotFound
 	// }

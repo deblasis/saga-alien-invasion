@@ -23,7 +23,8 @@ func NewAlienSpawner(numAliens int, w *World) *alienSpawner {
 func (a *alienSpawner) Spawn() error {
 	logg := log.With().Str("component", "alienSpawner.Spawn()").Logger()
 
-	namer := NewAlienOrdinalNamer()
+	//namer := NewAlienOrdinalNamer()
+	namer := NewFamousAliensNamer()
 
 	for i := 0; i < a.NumAliens; i++ {
 		alien := NewAlien(namer.NameAlien())

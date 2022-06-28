@@ -9,13 +9,13 @@
 - [x] Ensure pseudo-randomness by seeding rand if not in tests
 - [x] Alien spawner
 - [x] Alien
-  - [ ] Movement randomizer
-- [ ] City
-- [ ] Turns Loop
-- [ ] AliensFight
+  - [x] Movement randomizer
+- [x] City
+- [x] Turns Loop
+- [x] Aliens Battle
 - [ ] Documentation
 - [ ] UX
-- [ ] Bonus: alien names randomizer
+- [x] Bonus: alien names randomizer
 - [ ] CI/CD and trunk based dev (I am working on this alone... probably overkill for now)
 
 ## Thinking 🤔
@@ -23,6 +23,20 @@
 
 
 ## Usage
+
+```
+invasion [number of aliens invading] [flags]
+```
+
+### Options
+
+```
+  -h, --help                     help for invasion
+      --mapfile string           the file containing the map of the 🌍, [relative path] (default "map.txt")
+      --maxTurns int             the number of turns before the mothership calls the aliens back home and the program ends (default 10000)
+      --numAliensForBattle int   the number aliens required to start a battle that will end up destroying a city (default 2)
+      --verbose                  if True, sets the loglevel to show DEBUG messages
+```
 
 #### Help
 
@@ -33,10 +47,14 @@ go run ./...
 #### Run
 
 ```sh
-go run ./... 15
+go run ./... X
 ```
+
+where **X** is the number of aliens you want to spawn
 #### Run with logging for debug/dev purposes
 
 ```sh
-go run ./... 15 --verbose
+go run ./... X --verbose
 ```
+
+where **X** is the number of aliens you want to spawn
