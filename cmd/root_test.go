@@ -93,7 +93,6 @@ func Test_FileBased(t *testing.T) {
 			wantGolden: "example_1.golden",
 			wantStdErr: "",
 		},
-		//TODO: mapWriter
 		{
 			name: "example input with 100 aliens (total annihilation on day 1)",
 			args: args{
@@ -101,6 +100,15 @@ func Test_FileBased(t *testing.T) {
 				numAliens: 100,
 			},
 			wantGolden: "example_100.golden",
+			wantStdErr: "",
+		},
+		{
+			name: "unconnected cities input with 2 aliens ",
+			args: args{
+				inputFile: "unconnected_cities.input",
+				numAliens: 2,
+			},
+			wantGolden: "unconnected_cities.golden",
 			wantStdErr: "",
 		},
 	}

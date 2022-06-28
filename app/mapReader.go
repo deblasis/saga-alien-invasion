@@ -13,7 +13,7 @@ import (
 // using compiled regex for increased performance
 var (
 	//assuming that city names cannot have spaces but only dashes if multi-word
-	cityNameRegex    = regexp.MustCompile(`^([\w\-]+)(?:\s)`)
+	cityNameRegex    = regexp.MustCompile(`^([\w\-]+)(?:\s)|(^[\w\-]+)$`)
 	connectionsRegex = regexp.MustCompile(fmt.Sprintf(`(%v|%v|%v|%v)\s*=([\w|-]+)`, NORTH, EAST, SOUTH, WEST))
 )
 
@@ -62,7 +62,7 @@ func (mr *mapReader) parseCity(line string) error {
 	cityMatch := cityNameRegex.FindAllStringSubmatch(line, -1)
 	connectionMatches := connectionsRegex.FindAllString(line, -1)
 
-	if len(cityMatch) == 0 || len(cityMatch[0]) < 2 || cityMatch[0][1] == "" {
+	if len(cityMatch) == 0 || len(cityMatch[0]) < 2 || (cityMatch[0][1] == "" && cityMatch[0][0] == "") {
 		return fmt.Errorf("error processing line %v - %w", line, ErrCityNameNotFound)
 	}
 	// I am assuming that cities without connections are allowed
@@ -73,7 +73,11 @@ func (mr *mapReader) parseCity(line string) error {
 		return ErrTooManyConnections
 	}
 
-	city := mr.upsertCity(cityMatch[0][1])
+	cityName := cityMatch[0][1]
+	if cityName == "" {
+		cityName = cityMatch[0][0]
+	}
+	city := mr.upsertCity(cityName)
 
 	for _, conn := range connectionMatches {
 		kv := strings.Split(conn, "=")

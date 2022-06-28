@@ -39,7 +39,11 @@ func (m *MapWriter) WriteMap(writer io.Writer) error {
 			}
 			connections = append(connections, fmt.Sprintf("%v=%v", string(dir), city.Directions[dir].Name))
 		}
-		writer.Write([]byte(fmt.Sprintf("%v %v\n", cityName, strings.Join(connections, " "))))
+		if len(connections) == 0 {
+			writer.Write([]byte(cityName + "\n"))
+		} else {
+			writer.Write([]byte(fmt.Sprintf("%v %v\n", cityName, strings.Join(connections, " "))))
+		}
 	}
 	return nil
 }

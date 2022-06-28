@@ -157,6 +157,26 @@ Bar south=Foo west=Bee`),
 			wantErr: false,
 		},
 		{
+			name: "map with unconnected cities should be parsed correctly",
+			fields: fields{
+				Cities: map[string]*City{},
+			},
+			args: args{
+				reader: strings.NewReader("FooHaa\nBarrio\n"),
+			},
+			want: map[string]lofiCity{
+				"FooHaa": {
+					Name:       "FooHaa",
+					Directions: map[Direction]string{},
+				},
+				"Barrio": {
+					Name:       "Barrio",
+					Directions: map[Direction]string{},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "should not consider empty lines",
 			fields: fields{
 				Cities: map[string]*City{},
@@ -299,3 +319,6 @@ func map2LofiMap(m *Map) map[string]lofiCity {
 
 	return lofiMap
 }
+
+// map[Bar:{Bar [N:  E:  S: Foo W: Bee]} Baz:{Baz [N:  E: Foo  S:  W: ]} Bee:{Bee [N:  E: Bar  S:  W: ]} Foo:{Foo [N: Bar  E:  S:  W: ]} Foo :{Foo  [N: Bar E:  S: Qu-ux W: Baz]} Qu-ux:{Qu-ux [N: Foo  E:  S:  W: ]}], want
+// map[Bar:{Bar [N:  E:  S: Foo W: Bee]} Baz:{Baz [N:  E: Foo S:  W: ]} Bee:{Bee [N:  E: Bar S:  W: ]} Foo:{Foo [N: Bar E:  S: Qu-ux W: Baz]} Qu-ux:{Qu-ux [N: Foo E:  S:  W: ]}]
