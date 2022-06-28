@@ -7,3 +7,5 @@ type Config struct {
 	NumAliensForBattle int
 	Verbose            bool
 }
+
+const Separator = "--------------------------------------------------------"

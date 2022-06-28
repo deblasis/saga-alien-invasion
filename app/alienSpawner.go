@@ -32,6 +32,7 @@ func (a *alienSpawner) Spawn() error {
 		tIdx := Random.Intn(n)
 		tCity := a.cities[tIdx]
 		target := a.World.Map.Cities[tCity]
+		target.AliensInTown = append(target.AliensInTown, alien)
 		a.World.Aliens[alien.Id] = alien
 		alien.Location = target
 

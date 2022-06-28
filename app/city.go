@@ -3,7 +3,8 @@ package app
 type City struct {
 	Name string
 
-	Directions map[Direction]*City
+	Directions   map[Direction]*City
+	AliensInTown []*Alien
 
 	IsDestroyed bool
 }

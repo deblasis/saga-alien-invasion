@@ -1,7 +1,9 @@
 package app
 
 import (
+	"io"
 	"os"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -44,8 +46,6 @@ func (w *World) Spin() error {
 	logg := log.With().Str("component", "World.Spin()").Logger()
 	logg.Debug().Int("maxTurns", w.config.MaxTurns).Msg("The 🌍 starts spinning...")
 
-	w.printHeader()
-
 	for day := 0; day < w.config.MaxTurns; day++ {
 		w.CurrentDay = day
 
@@ -55,6 +55,7 @@ func (w *World) Spin() error {
 		}
 		//this is implicit in the rules, I am assuming that the game can end early if battles cannot take place anymore
 		if len(w.Aliens) < w.config.NumAliensForBattle {
+			w.cmd.Println(Separator)
 			w.cmd.Println("The alien force is too weak, the invasion failed")
 			logg.Debug().Int("aliensLeft", len(w.Aliens)).Int("numAliensForBattle", w.config.NumAliensForBattle).Msg("Not enough aliens left to start a fight, humanity is saved... for now!")
 			break
@@ -64,10 +65,14 @@ func (w *World) Spin() error {
 			logg.Debug().Msg("All cities have been destroyed")
 			break
 		}
-		//  TODO: handleBattles
-		//  TODO: moveAliens
-		//TODO: outputMap
-
+		//logg.Debug().Int("day", day).Msg("Executing day")
+		//assuming that a city is under siege and going to be destroyed within a day, so if we start with 2 aliens in a city it is marked as destroyed already, the logic can be changed by moving the handleBattles() below moveAliens()
+		if err := w.handleBattles(); err != nil {
+			return err
+		}
+		if err := w.moveAliens(); err != nil {
+			return err
+		}
 	}
 
 	logg.Debug().Msg("DONE!")
@@ -75,10 +80,14 @@ func (w *World) Spin() error {
 	return nil
 }
 
-func (w *World) printHeader() {
-	w.cmd.Println("--------------------------------------------------------")
+func (w *World) PrintHeader() {
+	w.cmd.Println(Separator)
 	w.cmd.Println("The alien invasion begins...")
-	w.cmd.Println("--------------------------------------------------------")
+}
+
+func (w *World) PrintMap(writer io.Writer) {
+	mw := NewMapWriter(w.Map)
+	mw.WriteMap(writer)
 }
 
 func (w *World) parseMapFile() error {
@@ -107,4 +116,61 @@ func (w *World) spawnAliens() error {
 	logg.Debug().Msg("executing")
 	as := NewAlienSpawner(w.config.AliensCount, w)
 	return as.Spawn()
+}
+
+func (w *World) handleBattles() error {
+	logg := log.With().Str("component", "World.handleBattles()").Int("day", w.CurrentDay).Logger()
+	logg.Debug().Msg("executing")
+
+	destroyedCities := make([]string, 0)
+
+	for _, cityName := range w.Map.sortedCityNames {
+		city := w.Map.Cities[cityName]
+		if city == nil {
+			logg.Debug().Str("city", cityName).Msg("🔥 already destroyed 🔥")
+			continue
+		}
+		if len(city.AliensInTown) >= w.config.NumAliensForBattle {
+			deadAliens := make([]string, 0)
+			destroyedCities = append(destroyedCities, cityName)
+			for _, alien := range city.AliensInTown {
+				delete(w.Aliens, alien.Id)
+				deadAliens = append(deadAliens, alien.Name)
+			}
+			logg.Debug().Str("city", cityName).Str("deadAliens", strings.Join(deadAliens, ",")).Msg("🔥 just destroyed 🔥")
+			w.cmd.Printf("%v has been destroyed by %v!\n", cityName, strings.Join(deadAliens, " and "))
+		}
+	}
+
+	for _, c := range destroyedCities {
+		w.destroyCity(c)
+	}
+
+	return nil
+}
+
+func (w *World) destroyCity(cityName string) {
+	delete(w.Map.Cities, cityName)
+	var idx int
+	for i, c := range w.Map.sortedCityNames {
+		if cityName == c {
+			idx = i
+			break
+		}
+	}
+	w.Map.sortedCityNames = append(w.Map.sortedCityNames[:idx], w.Map.sortedCityNames[idx+1:]...)
+}
+
+func (w *World) moveAliens() error {
+	logg := log.With().Str("component", "World.moveAliens()").Int("day", w.CurrentDay).Logger()
+	logg.Debug().Msg("executing")
+
+	for _, alien := range w.Aliens {
+		if alien == nil {
+			//logg.Debug().Str("alienId", id.String()).Msg("is dead")
+			continue
+		}
+		alien.Move()
+	}
+	return nil
 }

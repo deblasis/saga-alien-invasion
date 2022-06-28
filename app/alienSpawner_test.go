@@ -75,7 +75,6 @@ func Test_alienSpawner_Spawn(t *testing.T) {
 			},
 			wantErr: false,
 		},
-
 		{
 			name: "4 cities 16 aliens",
 			fields: fields{

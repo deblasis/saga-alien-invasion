@@ -21,6 +21,10 @@ func NewMapWriter(m *Map) *MapWriter {
 func (m *MapWriter) WriteMap(writer io.Writer) error {
 	logg := log.With().Str("component", "MapWriter.WriteMap()").Logger()
 	logg.Debug().Msg("executing")
+	if len(m.Map.sortedCityNames) == 0 {
+		writer.Write([]byte("COMPLETE ANNIHILATION - All cities have been destroyed ☠️\n"))
+		return nil
+	}
 	for _, cityName := range m.Map.sortedCityNames {
 		connections := make([]string, 0)
 		city := m.Map.Cities[cityName]

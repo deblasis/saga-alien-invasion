@@ -70,10 +70,18 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
+		world.PrintHeader()
+
 		err = world.Spin()
 		if err != nil {
 			return err
 		}
+
+		cmd.Println(app.Separator)
+		cmd.Printf("The 🌍 after %v day(s) of alien invasion:\n", world.CurrentDay)
+		cmd.Println(app.Separator)
+		world.PrintMap(cmd.OutOrStdout())
+		cmd.Println(app.Separator)
 
 		return nil
 	},

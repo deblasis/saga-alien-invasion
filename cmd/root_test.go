@@ -98,9 +98,9 @@ func Test_FileBased(t *testing.T) {
 			name: "example input with 100 aliens (total annihilation on day 1)",
 			args: args{
 				inputFile: "example.input",
-				numAliens: 10,
+				numAliens: 100,
 			},
-			wantGolden: "example_1.golden",
+			wantGolden: "example_100.golden",
 			wantStdErr: "",
 		},
 	}
