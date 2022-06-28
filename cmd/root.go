@@ -56,9 +56,8 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		cmd.Printf("DOING SOMETHING with aliensCount: %d\n", aliensCount)
 
-		world := app.NewWorld(&app.Config{
+		world := app.NewWorld(cmd, &app.Config{
 			AliensCount:        aliensCount,
 			MapfilePath:        viper.GetString(mapFileFlag),
 			MaxTurns:           viper.GetInt(maxTurnsFlag),

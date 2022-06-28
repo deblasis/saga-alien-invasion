@@ -5,19 +5,24 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
 )
 
 type World struct {
 	config *Config
 
-	Map    *Map
-	Aliens map[uuid.UUID]*Alien
+	Map        *Map
+	Aliens     map[uuid.UUID]*Alien
+	CurrentDay int
+
+	cmd *cobra.Command
 }
 
-func NewWorld(config *Config) *World {
+func NewWorld(cmd *cobra.Command, config *Config) *World {
 	return &World{
 		config: config,
 		Aliens: make(map[uuid.UUID]*Alien),
+		cmd:    cmd,
 	}
 }
 
@@ -36,12 +41,44 @@ func (w *World) Setup() error {
 }
 
 func (w *World) Spin() error {
-	//TODO: loop
-	//  TODO: handleBattles
-	//  TODO: moveAliens
-	//TODO: outputMap
+	logg := log.With().Str("component", "World.Spin()").Logger()
+	logg.Debug().Int("maxTurns", w.config.MaxTurns).Msg("The 🌍 starts spinning...")
+
+	w.printHeader()
+
+	for day := 0; day < w.config.MaxTurns; day++ {
+		w.CurrentDay = day
+
+		if len(w.Aliens) == 0 {
+			logg.Debug().Msg("All aliens are dead")
+			break
+		}
+		//this is implicit in the rules, I am assuming that the game can end early if battles cannot take place anymore
+		if len(w.Aliens) < w.config.NumAliensForBattle {
+			w.cmd.Println("The alien force is too weak, the invasion failed")
+			logg.Debug().Int("aliensLeft", len(w.Aliens)).Int("numAliensForBattle", w.config.NumAliensForBattle).Msg("Not enough aliens left to start a fight, humanity is saved... for now!")
+			break
+		}
+		//possibly redundant but it codifies a rule for ending the game
+		if len(w.Map.Cities) == 0 {
+			logg.Debug().Msg("All cities have been destroyed")
+			break
+		}
+		//  TODO: handleBattles
+		//  TODO: moveAliens
+		//TODO: outputMap
+
+	}
+
+	logg.Debug().Msg("DONE!")
 
 	return nil
+}
+
+func (w *World) printHeader() {
+	w.cmd.Println("--------------------------------------------------------")
+	w.cmd.Println("The alien invasion begins...")
+	w.cmd.Println("--------------------------------------------------------")
 }
 
 func (w *World) parseMapFile() error {
