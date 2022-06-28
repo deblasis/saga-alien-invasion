@@ -16,3 +16,26 @@
 - [ ] Documentation
 - [ ] UX
 - [ ] Bonus: alien names randomizer
+
+## Thinking 🤔
+- [ ] Consider using an EventBus
+
+
+## Usage
+
+#### Help
+
+```sh
+go run ./...
+```
+
+#### Run
+
+```sh
+go run ./... 15
+```
+#### Run with logging for debug/dev purposes
+
+```sh
+go run ./... 15 --verbose
+```
