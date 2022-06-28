@@ -3,8 +3,9 @@
 ## Todos
 
 - [x] CLI
-- [ ] File parser
-- [ ] Map
+- [x] File parser
+- [x] Map
+- [ ] Ensure repeteability even if we are dealing with "random" stuff
 - [ ] Alien spawner
 - [ ] Alien
   - [ ] Movement randomizer
