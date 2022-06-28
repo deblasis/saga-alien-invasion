@@ -61,7 +61,7 @@ func (f *FakeRandomizer) Intn(n int) int {
 		}
 	}
 
-	if f.cont[n]+1 >= len(f.seq[n])-1 {
+	if f.cont[n] >= len(f.seq[n])-1 {
 		f.cont[n] = -1
 	}
 	f.cont[n]++
