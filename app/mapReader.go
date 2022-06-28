@@ -44,7 +44,7 @@ func (mr *mapReader) ParseMapFile(reader io.Reader) (*Map, error) {
 	// this is because ordering in maps is not preserved in Go for security reasons
 	// we use a slice to provide ordering and here we initialize it
 	keys := make([]string, 0)
-	for k, _ := range mr.Cities {
+	for k := range mr.Cities {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
