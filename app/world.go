@@ -3,13 +3,15 @@ package app
 import (
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
 
 type World struct {
 	config *Config
 
-	Map *Map
+	Map    *Map
+	Aliens map[uuid.UUID]*Alien
 }
 
 func NewWorld(config *Config) *World {
