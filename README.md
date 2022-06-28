@@ -2,7 +2,7 @@
 
 ## Todos
 
-- [ ] CLI
+- [x] CLI
 - [ ] File parser
 - [ ] Map
 - [ ] Alien spawner

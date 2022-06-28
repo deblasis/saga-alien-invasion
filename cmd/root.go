@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/deblasis/saga-alien-invasion/app"
 	"github.com/spf13/cobra"
 )
 
@@ -29,6 +30,21 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 		cmd.Printf("DOING SOMETHING with aliensCount: %d\n", aliensCount)
+
+		world := app.NewWorld(&app.Config{
+			AliensCount: aliensCount,
+		})
+
+		err = world.Setup()
+		if err != nil {
+			return err
+		}
+
+		err = world.Spin()
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }
