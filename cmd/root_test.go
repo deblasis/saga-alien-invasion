@@ -60,7 +60,7 @@ func Test_ValidInput(t *testing.T) {
 	b := new(bytes.Buffer)
 	cmd.SetOut(b)
 	cmd.SetErr(b)
-	cmd.SetArgs([]string{fmt.Sprint(15), "--" + mapFileFlag, "../map.txt", "--verbose"})
+	cmd.SetArgs([]string{fmt.Sprint(15), "--" + app.MapFileFlag, "../map.txt", "--verbose"})
 	cmd.Execute()
 	out, err := ioutil.ReadAll(b)
 	if err != nil {
@@ -112,7 +112,7 @@ func Test_FileBased(t *testing.T) {
 			defer func() { app.Random = app.NewRealRandomizer() }()
 
 			path := "../cmd/testdata/" + tt.args.inputFile
-			out, outErr, _ := executeCommand(rootCmd, fmt.Sprint(tt.args.numAliens), "--"+mapFileFlag, path)
+			out, outErr, _ := executeCommand(rootCmd, fmt.Sprint(tt.args.numAliens), "--"+app.MapFileFlag, path)
 
 			goldenfile := filepath.Join("testdata", tt.wantGolden)
 			want, err := os.ReadFile(goldenfile)

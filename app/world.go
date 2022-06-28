@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -94,7 +95,7 @@ func (w *World) parseMapFile() error {
 	logg := log.With().Str("component", "World.parseMapFile()").Str("mapfile", w.config.MapfilePath).Logger()
 	logg.Debug().Msg("executing")
 	if _, err := os.Stat(w.config.MapfilePath); err != nil {
-		return err
+		return fmt.Errorf("%v not found - %w", w.config.MapfilePath, ErrMapFileNotFound)
 	}
 	mr := NewMapReader()
 	r, err := os.Open(w.config.MapfilePath)
@@ -174,3 +175,7 @@ func (w *World) moveAliens() error {
 	}
 	return nil
 }
+
+var (
+	ErrMapFileNotFound = fmt.Errorf("please provide a map.txt file in the current working directory or specify a mapfile path via the --%v flag", MapFileFlag)
+)

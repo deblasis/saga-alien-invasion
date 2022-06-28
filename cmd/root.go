@@ -11,24 +11,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	mapFileFlag            = "mapfile"
-	maxTurnsFlag           = "maxTurns"
-	verboseFlag            = "verbose"
-	numAliensForBattleFlag = "numAliensForBattle"
-)
-
 func init() {
-	rootCmd.PersistentFlags().String(mapFileFlag, "map.txt", "the file containing the map of the 🌍, [relative path]")
-	rootCmd.PersistentFlags().Int(maxTurnsFlag, 10000, "the number of turns before the mothership calls the aliens back home and the program ends")
-	rootCmd.PersistentFlags().Int(numAliensForBattleFlag, 2, "the number aliens required to start a battle that will end up destroying a city")
-	rootCmd.PersistentFlags().Bool(verboseFlag, false, "if True, sets the loglevel to show DEBUG messages")
+	rootCmd.PersistentFlags().String(app.MapFileFlag, "map.txt", "the file containing the map of the 🌍, [relative path]")
+	rootCmd.PersistentFlags().Int(app.MaxTurnsFlag, 10000, "the number of turns before the mothership calls the aliens back home and the program ends")
+	rootCmd.PersistentFlags().Int(app.NumAliensForBattleFlag, 2, "the number aliens required to start a battle that will end up destroying a city")
+	rootCmd.PersistentFlags().Bool(app.VerboseFlag, false, "if True, sets the loglevel to show DEBUG messages")
 
 	//this is to avoid casting when lookingup the flag values
-	viper.BindPFlag(mapFileFlag, rootCmd.PersistentFlags().Lookup(mapFileFlag))
-	viper.BindPFlag(maxTurnsFlag, rootCmd.PersistentFlags().Lookup(maxTurnsFlag))
-	viper.BindPFlag(numAliensForBattleFlag, rootCmd.PersistentFlags().Lookup(numAliensForBattleFlag))
-	viper.BindPFlag(verboseFlag, rootCmd.PersistentFlags().Lookup(verboseFlag))
+	viper.BindPFlag(app.MapFileFlag, rootCmd.PersistentFlags().Lookup(app.MapFileFlag))
+	viper.BindPFlag(app.MaxTurnsFlag, rootCmd.PersistentFlags().Lookup(app.MaxTurnsFlag))
+	viper.BindPFlag(app.NumAliensForBattleFlag, rootCmd.PersistentFlags().Lookup(app.NumAliensForBattleFlag))
+	viper.BindPFlag(app.VerboseFlag, rootCmd.PersistentFlags().Lookup(app.VerboseFlag))
 }
 
 var rootCmd = &cobra.Command{
@@ -47,7 +40,7 @@ var rootCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		isVerbose := viper.GetBool(verboseFlag)
+		isVerbose := viper.GetBool(app.VerboseFlag)
 		if isVerbose {
 			zerolog.SetGlobalLevel(zerolog.DebugLevel)
 		}
@@ -59,9 +52,9 @@ var rootCmd = &cobra.Command{
 
 		world := app.NewWorld(cmd, &app.Config{
 			AliensCount:        aliensCount,
-			MapfilePath:        viper.GetString(mapFileFlag),
-			MaxTurns:           viper.GetInt(maxTurnsFlag),
-			NumAliensForBattle: viper.GetInt(numAliensForBattleFlag),
+			MapfilePath:        viper.GetString(app.MapFileFlag),
+			MaxTurns:           viper.GetInt(app.MaxTurnsFlag),
+			NumAliensForBattle: viper.GetInt(app.NumAliensForBattleFlag),
 			Verbose:            isVerbose,
 		})
 
