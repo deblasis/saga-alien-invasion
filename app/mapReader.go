@@ -12,6 +12,7 @@ import (
 
 // using compiled regex for increased performance
 var (
+	//assuming that city names cannot have spaces but only dashes if multi-word
 	cityNameRegex    = regexp.MustCompile(`^([\w\-]+)`)
 	connectionsRegex = regexp.MustCompile(fmt.Sprintf(`(%v|%v|%v|%v)\s*=([\w|-]+)`, NORTH, EAST, SOUTH, WEST))
 )
