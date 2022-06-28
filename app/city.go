@@ -3,16 +3,14 @@ package app
 type City struct {
 	Name string
 
-	North *City
-	East  *City
-	South *City
-	West  *City
+	Directions map[Direction]*City
 
 	IsDestroyed bool
 }
 
 func NewCity(name string) *City {
 	return &City{
-		Name: name,
+		Name:       name,
+		Directions: make(map[Direction]*City),
 	}
 }

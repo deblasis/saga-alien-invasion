@@ -11,10 +11,7 @@ import (
 type lofiCity struct {
 	Name string
 
-	North string
-	East  string
-	South string
-	West  string
+	Directions map[Direction]string
 }
 
 func NewLofiCity(name string) *lofiCity {
@@ -48,39 +45,49 @@ Bar south=Foo west=Bee`),
 			},
 			want: map[string]lofiCity{
 				"Foo": {
-					Name:  "Foo",
-					North: "Bar",
-					East:  "",
-					South: "Qu-ux",
-					West:  "Baz",
+					Name: "Foo",
+					Directions: map[Direction]string{
+						NORTH: "Bar",
+						EAST:  "",
+						SOUTH: "Qu-ux",
+						WEST:  "Baz",
+					},
 				},
 				"Bar": {
-					Name:  "Bar",
-					North: "",
-					East:  "",
-					South: "Foo",
-					West:  "Bee",
+					Name: "Bar",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "",
+						SOUTH: "Foo",
+						WEST:  "Bee",
+					},
 				},
 				"Baz": {
-					Name:  "Baz",
-					North: "",
-					East:  "Foo",
-					South: "",
-					West:  "",
+					Name: "Baz",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "Foo",
+						SOUTH: "",
+						WEST:  "",
+					},
 				},
 				"Qu-ux": {
-					Name:  "Qu-ux",
-					North: "Foo",
-					East:  "",
-					South: "",
-					West:  "",
+					Name: "Qu-ux",
+					Directions: map[Direction]string{
+						NORTH: "Foo",
+						EAST:  "",
+						SOUTH: "",
+						WEST:  "",
+					},
 				},
 				"Bee": {
-					Name:  "Bee",
-					North: "",
-					East:  "Bar",
-					South: "",
-					West:  "",
+					Name: "Bee",
+					Directions: map[Direction]string{
+						NORTH: "",
+						EAST:  "Bar",
+						SOUTH: "",
+						WEST:  "",
+					},
 				},
 			},
 			wantErr: false,
@@ -113,17 +120,17 @@ func map2LofiMap(m *Map) map[string]lofiCity {
 
 	for cityName, city := range m.Cities {
 		lofiCity := NewLofiCity(cityName)
-		if city.North != nil {
-			lofiCity.North = city.North.Name
+		if city.Directions[NORTH] != nil {
+			lofiCity.Directions[NORTH] = city.Directions[NORTH].Name
 		}
-		if city.East != nil {
-			lofiCity.East = city.East.Name
+		if city.Directions[EAST] != nil {
+			lofiCity.Directions[EAST] = city.Directions[EAST].Name
 		}
-		if city.South != nil {
-			lofiCity.South = city.South.Name
+		if city.Directions[SOUTH] != nil {
+			lofiCity.Directions[SOUTH] = city.Directions[SOUTH].Name
 		}
-		if city.West != nil {
-			lofiCity.West = city.West.Name
+		if city.Directions[WEST] != nil {
+			lofiCity.Directions[WEST] = city.Directions[WEST].Name
 		}
 		lofiMap[cityName] = *lofiCity
 	}
