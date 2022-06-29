@@ -1,13 +1,10 @@
 --------------------------------------------------------
-The alien invasion begins... 1 aliens are approaching
+The alien invasion begins... 2 aliens are approaching
 --------------------------------------------------------
-The alien force is too weak, the invasion failed
+The 🌍 after 10000 day(s) of alien invasion:
 --------------------------------------------------------
-The 🌍 after 1 day(s) of alien invasion:
---------------------------------------------------------
-Bar south=Foo west=Bee
+Bar south=Foo
 Baz east=Foo
-Bee east=Bar
 Foo north=Bar south=Qu-ux west=Baz
 Qu-ux north=Foo
 --------------------------------------------------------

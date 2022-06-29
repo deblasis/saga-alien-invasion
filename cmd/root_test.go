@@ -103,12 +103,42 @@ func Test_FileBased(t *testing.T) {
 			wantStdErr: "",
 		},
 		{
-			name: "unconnected cities input with 2 aliens ",
+			name: "unconnected cities input with 2 aliens",
 			args: args{
 				inputFile: "unconnected_cities.input",
 				numAliens: 2,
 			},
 			wantGolden: "unconnected_cities.golden",
+			wantStdErr: "",
+		},
+		// single city tests cover also for the fact that connections become cities as well
+		{
+			name: "single city connected to many with 2 aliens",
+			args: args{
+				inputFile: "single_city_with_connections.input",
+				numAliens: 2,
+			},
+			wantGolden: "single_city_with_connections_2.golden",
+			wantStdErr: "",
+		},
+		// this tests for an alien force that can cause damage but the game will end with cities left intact
+		{
+			name: "single city connected to many with 6 aliens",
+			args: args{
+				inputFile: "single_city_with_connections.input",
+				numAliens: 6,
+			},
+			wantGolden: "single_city_with_connections_6.golden",
+			wantStdErr: "",
+		},
+		// this edge case tests the fact that the battle on day 1 is already enough to weaken the alien force so that it cannot cause any more harm
+		{
+			name: "single city connected to many with 7 aliens",
+			args: args{
+				inputFile: "single_city_with_connections.input",
+				numAliens: 7,
+			},
+			wantGolden: "single_city_with_connections_7.golden",
 			wantStdErr: "",
 		},
 	}

@@ -268,8 +268,8 @@ Bar south=Foo west=Bee
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mr := &mapReader{
-				Cities: tt.fields.Cities,
+			mr := &MapReader{
+				cities: tt.fields.Cities,
 			}
 			got, err := mr.ParseMapFile(tt.args.reader)
 			if (err != nil) != tt.wantErr {
