@@ -21,3 +21,4 @@ I generally use a kanban board to track even my own work, this time I used this 
 ## Thinking 🤔
 - [ ] Consider using an EventBus
 
+
