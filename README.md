@@ -1,5 +1,7 @@
 # Alex's Saga Alien Invasion
 
+[![Build and Tests](https://github.com/deblasis/saga-alien-invasion/actions/workflows/tests.yml/badge.svg)](https://github.com/deblasis/saga-alien-invasion/actions/workflows/tests.yml)
+
 This repository contains the source-code of the `saga-alien-invasion` CLI.
 
 ## Usage
@@ -23,7 +25,7 @@ saga-alien-invasion [number of aliens invading] [flags]
 In this repository we leverage GoDoc and Docker, in order to view a self-hosted GoDoc site, run:
 
 ```sh
-make run godoc
+make godoc
 ```
 and navigate to http://localhost:6060/pkg/github.com/deblasis/saga-alien-invasion/
 
