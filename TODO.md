@@ -16,7 +16,7 @@ I generally use a kanban board to track even my own work, this time I used this 
 - [x] Documentation
 - [ ] UX improvements
 - [x] Bonus: alien names randomizer
-- [ ] CI/CD and trunk based dev (I am working on this alone... probably overkill for now)
+- [x] CI/CD and trunk based dev (I am working on this alone... probably overkill for now)
 
 ## Thinking 🤔
 - [ ] Consider using an EventBus
