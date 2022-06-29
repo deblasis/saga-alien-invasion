@@ -4,6 +4,11 @@
 
 This repository contains the source-code of the `saga-alien-invasion` CLI.
 
+## Demo
+
+https://user-images.githubusercontent.com/29378614/176482487-7c736fbd-0042-42fb-b998-a8c31bb99629.mp4
+
+
 ## Usage
 
 ```
