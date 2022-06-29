@@ -2,7 +2,6 @@ package app
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"regexp"
@@ -17,17 +16,20 @@ var (
 	connectionsRegex = regexp.MustCompile(fmt.Sprintf(`(%v|%v|%v|%v)\s*=([\w|-]+)`, NORTH, EAST, SOUTH, WEST))
 )
 
-type mapReader struct {
-	Cities map[string]*City
+// MapReader takes care of parsing a mapfile
+type MapReader struct {
+	cities map[string]*City
 }
 
-func NewMapReader() *mapReader {
-	return &mapReader{
-		Cities: make(map[string]*City),
+// NewMapReader returns a mapReader instance
+func NewMapReader() *MapReader {
+	return &MapReader{
+		cities: make(map[string]*City),
 	}
 }
 
-func (mr *mapReader) ParseMapFile(reader io.Reader) (*Map, error) {
+// ParseMapFile scans a mapfile for valid cities and returns a [Map] or an error accordingly
+func (mr *MapReader) ParseMapFile(reader io.Reader) (*Map, error) {
 	scanner := bufio.NewScanner(reader)
 
 	for scanner.Scan() {
@@ -44,18 +46,18 @@ func (mr *mapReader) ParseMapFile(reader io.Reader) (*Map, error) {
 	// this is because ordering in maps is not preserved in Go for security reasons
 	// we use a slice to provide ordering and here we initialize it
 	keys := make([]string, 0)
-	for k := range mr.Cities {
+	for k := range mr.cities {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
 	return &Map{
-		Cities:          mr.Cities,
+		Cities:          mr.cities,
 		sortedCityNames: keys,
 	}, nil
 }
 
-func (mr *mapReader) parseCity(line string) error {
+func (mr *MapReader) parseCity(line string) error {
 	if line == "" {
 		return nil
 	}
@@ -105,16 +107,9 @@ func (mr *mapReader) parseCity(line string) error {
 	return nil
 }
 
-func (mr *mapReader) upsertCity(cityMatch string) *City {
-	if mr.Cities[cityMatch] == nil {
-		mr.Cities[cityMatch] = NewCity(cityMatch)
+func (mr *MapReader) upsertCity(cityMatch string) *City {
+	if mr.cities[cityMatch] == nil {
+		mr.cities[cityMatch] = NewCity(cityMatch)
 	}
-	return mr.Cities[cityMatch]
+	return mr.cities[cityMatch]
 }
-
-var (
-	ErrCityNameNotFound    = errors.New("city name not found")
-	ErrConnectionsNotFound = errors.New("connections not found")
-	ErrTooManyConnections  = errors.New("too many connections")
-	ErrInvalidDirection    = errors.New("invalid direction")
-)

@@ -1,3 +1,4 @@
+// Package cmd implements the CLI commands, args and flag parsing and generally speaking the entrypoint of the program
 package cmd
 
 import (
@@ -25,7 +26,7 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use: "invasion [number of aliens invading]",
+	Use: "saga-alien-invasion [number of aliens invading]",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return fmt.Errorf("the number of aliens invading the world must be specified")
@@ -50,38 +51,53 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		world := app.NewWorld(cmd, &app.Config{
+		config := &app.Config{
 			AliensCount:        aliensCount,
 			MapfilePath:        viper.GetString(app.MapFileFlag),
 			MaxTurns:           viper.GetInt(app.MaxTurnsFlag),
 			NumAliensForBattle: viper.GetInt(app.NumAliensForBattleFlag),
 			Verbose:            isVerbose,
-		})
+		}
+
+		world := app.NewWorld(cmd, config)
 
 		err = world.Setup()
 		if err != nil {
 			return err
 		}
 
-		world.PrintHeader()
+		printHeader(cmd, config)
 
 		err = world.Spin()
 		if err != nil {
 			return err
 		}
-
-		cmd.Println(app.Separator)
-		cmd.Printf("The 🌍 after %v day(s) of alien invasion:\n", world.CurrentDay+1)
-		cmd.Println(app.Separator)
-		world.PrintMap(cmd.OutOrStdout())
-		cmd.Println(app.Separator)
+		printSummary(cmd, world)
 
 		return nil
 	},
 }
 
+// Execute executes the command logic
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func printHeader(cmd *cobra.Command, config *app.Config) {
+	cmd.Println(app.Separator)
+	cmd.Printf("The alien invasion begins... %d aliens are approaching\n", config.AliensCount)
+}
+
+func printSummary(cmd *cobra.Command, w *app.World) {
+	cmd.Println(app.Separator)
+	cmd.Printf("The 🌍 after %v day(s) of alien invasion:\n", w.CurrentDay+1)
+	cmd.Println(app.Separator)
+	printMap(cmd, w.Map)
+	cmd.Println(app.Separator)
+}
+func printMap(cmd *cobra.Command, m *app.Map) {
+	mw := app.NewMapWriter(m)
+	mw.WriteMap(cmd.OutOrStdout())
 }

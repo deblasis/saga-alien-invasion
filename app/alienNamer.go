@@ -7,6 +7,7 @@ import (
 	"golang.org/x/text/language"
 )
 
+// AlienNamer decides how newborn aliens should be known to others, regardless of their innate "DNA fingerprint" [Alien.ID]
 type AlienNamer interface {
 	NameAlien() string
 }
@@ -15,6 +16,7 @@ type ordinalNamer struct {
 	seq int
 }
 
+// NewAlienOrdinalNamer instantiates an AlienNamer that simply names Aliens sequentially, they are just cannon fodder at the end... the alien hive mind doesn't want heroes to be remembered when using this implementation
 func NewAlienOrdinalNamer() AlienNamer {
 	return &ordinalNamer{
 		seq: 0,
@@ -32,6 +34,7 @@ type famousAliensNamer struct {
 	right []string
 }
 
+// NewFamousAliensNamer instantiates an AlienNamer that instills some glory into the Aliens in order to terrify humans a bit more
 func NewFamousAliensNamer() AlienNamer {
 	return &famousAliensNamer{
 		left: []string{

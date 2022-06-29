@@ -1,5 +1,6 @@
 package app
 
+// Direction points to a direction relative to a City, currently only the 4 cardinal points but extendable to anything that could be put into string format, eg: routes, coordinates, etc.
 type Direction string
 
 // instead of harcoding direction names inside *City, let's use a map keyed to this custom type that will allow extensibility as well as easier iteration

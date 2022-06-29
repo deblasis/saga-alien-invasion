@@ -16,10 +16,13 @@ type Rand interface {
 	Intn(n int) int
 }
 
+// Random holds a reference to the randomizer currently in use, by default we use the real one (weak one...) math/rand and we also seed it in init().
+// During tests we override this with another randomizer that implements the interface [Rand]
 var Random = NewRealRandomizer()
 
 type RealRandomizer struct{}
 
+// NewRealRandomizer instantiates a new RealRandomizer
 func NewRealRandomizer() Rand {
 	return &RealRandomizer{}
 }
@@ -38,6 +41,7 @@ type FakeRandomizer struct {
 	cont map[int]int
 }
 
+// NewFakeRandomizer instantiates a new FakeRandomizer
 func NewFakeRandomizer() Rand {
 	return &FakeRandomizer{
 		RWMutex: sync.RWMutex{},
@@ -46,6 +50,7 @@ func NewFakeRandomizer() Rand {
 	}
 }
 
+// Intn tries to return "predictable randomness" in sequences scoped by their range numner (n int) argument
 func (f *FakeRandomizer) Intn(n int) int {
 
 	f.Lock()

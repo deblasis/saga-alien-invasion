@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strings"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// World is the "container object" that holds basically the state of the... World
 type World struct {
 	config *Config
 
@@ -21,6 +21,7 @@ type World struct {
 	cmd *cobra.Command
 }
 
+// NewWorld returns an instance of World given a [cobra.Command] (so that we can capture/redirect stdout and stderr) and [Config]
 func NewWorld(cmd *cobra.Command, config *Config) *World {
 	return &World{
 		config: config,
@@ -29,6 +30,7 @@ func NewWorld(cmd *cobra.Command, config *Config) *World {
 	}
 }
 
+// Setup initializes the World
 func (w *World) Setup() error {
 	err := w.parseMapFile()
 	if err != nil {
@@ -43,6 +45,8 @@ func (w *World) Setup() error {
 	return nil
 }
 
+// Spin starts the loop that can be related to the passing of time (turns/days are assumed to be the same unit of measure here)
+// inside this loop things happen, such as battles between aliens, cities being destroyed, aliens moving
 func (w *World) Spin() error {
 	logg := log.With().Str("component", "World.Spin()").Logger()
 	logg.Debug().Int("maxTurns", w.config.MaxTurns).Msg("The 🌍 starts spinning...")
@@ -82,16 +86,6 @@ func (w *World) Spin() error {
 	return nil
 }
 
-func (w *World) PrintHeader() {
-	w.cmd.Println(Separator)
-	w.cmd.Println("The alien invasion begins...")
-}
-
-func (w *World) PrintMap(writer io.Writer) {
-	mw := NewMapWriter(w.Map)
-	mw.WriteMap(writer)
-}
-
 func (w *World) parseMapFile() error {
 	logg := log.With().Str("component", "World.parseMapFile()").Str("mapfile", w.config.MapfilePath).Logger()
 	logg.Debug().Msg("executing")
@@ -116,8 +110,8 @@ func (w *World) parseMapFile() error {
 func (w *World) spawnAliens() error {
 	logg := log.With().Str("component", "World.spawnAliens()").Int("aliensCount", w.config.AliensCount).Logger()
 	logg.Debug().Msg("executing")
-	as := NewAlienSpawner(w.config.AliensCount, w)
-	return as.Spawn()
+	as := NewMothership(w.config.AliensCount, w)
+	return as.DeployAlien()
 }
 
 func (w *World) handleBattles() error {
@@ -176,7 +170,3 @@ func (w *World) moveAliens() error {
 	}
 	return nil
 }
-
-var (
-	ErrMapFileNotFound = fmt.Errorf("please provide a map.txt file in the current working directory or specify a mapfile path via the --%v flag", MapFileFlag)
-)

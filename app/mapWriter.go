@@ -8,26 +8,29 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// MapWriter outputs the map to an [io.Writer]
 type MapWriter struct {
-	Map *Map
+	m *Map
 }
 
+// NewMapWriter returns an instance of a MapWriter
 func NewMapWriter(m *Map) *MapWriter {
 	return &MapWriter{
-		Map: m,
+		m: m,
 	}
 }
 
+// WriteMap outputs the map in text format
 func (m *MapWriter) WriteMap(writer io.Writer) error {
 	logg := log.With().Str("component", "MapWriter.WriteMap()").Logger()
 	logg.Debug().Msg("executing")
-	if len(m.Map.sortedCityNames) == 0 {
+	if len(m.m.sortedCityNames) == 0 {
 		writer.Write([]byte("COMPLETE ANNIHILATION - All cities have been destroyed ☠️\n"))
 		return nil
 	}
-	for _, cityName := range m.Map.sortedCityNames {
+	for _, cityName := range m.m.sortedCityNames {
 		connections := make([]string, 0)
-		city := m.Map.Cities[cityName]
+		city := m.m.Cities[cityName]
 		if city == nil {
 			continue
 		}

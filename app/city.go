@@ -5,8 +5,6 @@ type City struct {
 
 	Directions   map[Direction]*City
 	AliensInTown []*Alien
-
-	IsDestroyed bool
 }
 
 func NewCity(name string) *City {
