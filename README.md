@@ -15,7 +15,7 @@ https://user-images.githubusercontent.com/29378614/176482487-7c736fbd-0042-42fb-
 saga-alien-invasion [number of aliens invading] [flags]
 ```
 
-### Options
+### Flags
 
 ```
   -h, --help                     help for saga-alien-invasion
