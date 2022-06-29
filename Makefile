@@ -34,7 +34,7 @@ test/cover:
 	$(GOCOVER) -func=coverage.out
 	$(GOCOVER) -html=coverage.out -o coverage.html
 	$(DOCKER) build -f ./docker/Dockerfile.nginx -t deblasis-saga-alien-invasion-cover .
-	@echo "\n\nPlease navigate to http://localhost:6060/pkg/github.com/deblasis/saga-alien-invasion/ to access the documentation\n\n"
+	@echo "\n\nPlease navigate to http://localhost:8080/ to view the code coverage report\n\n"
 	$(DOCKER) run --rm -p 8080:80 deblasis-saga-alien-invasion-cover
 
 .PHONY: godoc
